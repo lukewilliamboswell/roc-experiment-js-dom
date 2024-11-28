@@ -193,12 +193,22 @@ impl RocRefcounted for HtmlText {
     }
 }
 
-#[derive(Clone, Copy)]
+#[derive(Clone, Copy, PartialEq)]
 #[repr(u8)]
 pub enum DiscriminantHtml {
     Element = 0,
     None = 1,
     Text = 2,
+}
+
+impl core::fmt::Debug for DiscriminantHtml {
+    fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
+        match self {
+            Self::Element => f.write_str("Html::Element"),
+            Self::None => f.write_str("Html::None"),
+            Self::Text => f.write_str("Html::Text"),
+        }
+    }
 }
 
 roc_refcounted_noop_impl!(DiscriminantHtml);
