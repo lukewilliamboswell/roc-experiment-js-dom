@@ -1,20 +1,20 @@
 module [
     Html,
     translate,
+    none,
     text,
     div,
     button,
     ul,
     li,
+    style,
     on_click,
 ]
-
-import json.Json
 
 Attribute msg := [
     Attr { key : Str, value : Str },
     Event { name : Str, handler : List U8 },
-] where msg implements Encoding
+]
 
 to_attrs_events : List (Attribute msg) -> (List { key : Str, value : Str }, List { name : Str, handler : List U8 })
 to_attrs_events = \raw_attrs ->
@@ -49,26 +49,36 @@ translate = \elem, parentToChild, childToParent ->
                 { tag, attrs, events }
                 (List.map children \c -> translate c parentToChild childToParent)
 
+none : Html state
+none = None
+
 text : Str -> Html state
 text = \str -> Text str
 
-div : List (Attribute msg), List (Html state) -> Html state where
+div : List (Attribute msg), List (Html state) -> Html state
 div = \raw_attrs, children ->
     (attrs, events) = to_attrs_events raw_attrs
     Element { tag: "div", attrs, events } children
 
-button : List { key : Str, value : Str }, List { name : Str, handler : List U8 }, List (Html state) -> Html state
-button = \attrs, events, children ->
+button : List (Attribute msg), List (Html state) -> Html state
+button = \raw_attrs, children ->
+    (attrs, events) = to_attrs_events raw_attrs
     Element { tag: "button", attrs, events } children
 
-ul : List { key : Str, value : Str }, List (Html state) -> Html state
-ul = \attrs, children ->
-    Element { tag: "ul", attrs, events: [] } children
+ul : List (Attribute msg), List (Html state) -> Html state
+ul = \raw_attrs, children ->
+    (attrs, events) = to_attrs_events raw_attrs
+    Element { tag: "ul", attrs, events } children
 
-li : List { key : Str, value : Str }, List (Html state) -> Html state
-li = \attrs, children ->
-    Element { tag: "li", attrs, events: [] } children
+li : List (Attribute msg), List (Html state) -> Html state
+li = \raw_attrs, children ->
+    (attrs, events) = to_attrs_events raw_attrs
+    Element { tag: "li", attrs, events } children
 
-on_click : msg -> Attribute msg
-on_click = \msg ->
-    @Attribute (Event { name: "onclick", handler: Encode.toBytes msg Json.utf8 })
+on_click : List U8 -> Attribute msg
+on_click = \handler ->
+    @Attribute (Event { name: "onclick", handler })
+
+style : Str -> Attribute msg
+style = \value ->
+    @Attribute (Attr { key: "style", value })

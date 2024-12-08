@@ -2,7 +2,7 @@ app [Model, init, update, render] {
     web: platform "../platform/main.roc",
 }
 
-import web.Html exposing [Html, div, button, ul, li, text]
+import web.Html exposing [Html, div, button, ul, li, text, style, on_click]
 import web.Action exposing [Action]
 
 Model : {
@@ -36,28 +36,23 @@ update = \model, raw ->
 render : Model -> Html Model
 render = \model ->
     div
-        [
-            { key: "style", value: "display: flex; justify-content: space-around; padding: 20px;" },
-        ]
+        [style "display: flex; justify-content: space-around; padding: 20px;"]
         [
             counter Left model.left,
             counter Middle model.middle,
             counter Right model.right,
         ]
 
-counter : [Left, Middle, Right], I64 -> _
+counter : [Left, Middle, Right], I64 -> Html _
 counter = \variant, value ->
     ul
-        [
-            { key: "style", value: "list-style: none; padding: 0; text-align: center;" },
-        ]
+        [style "list-style: none; padding: 0; text-align: center;"]
         [
             li [] [
                 button
                     [
-                        {
-                            key: "style",
-                            value:
+                        on_click (encodeEvent (UserClickedDecrement variant)),
+                        style
                             """
                             background-color: red;
                             color: white;
@@ -68,26 +63,17 @@ counter = \variant, value ->
                             margin: 5px;
                             font-size: 16px;
                             """,
-                        },
-                    ]
-                    [
-                        { name: "onclick", handler: encodeEvent (UserClickedDecrement variant) },
                     ]
                     [text "-"],
             ],
             li
-                [
-                    { key: "style", value: "font-size: 24px; margin: 15px 0; font-weight: bold;" },
-                ]
-                [
-                    text (Inspect.toStr value),
-                ],
+                [style "font-size: 24px; margin: 15px 0; font-weight: bold;"]
+                [text (Inspect.toStr value)],
             li [] [
                 button
                     [
-                        {
-                            key: "style",
-                            value:
+                        on_click (encodeEvent (UserClickedIncrement variant)),
+                        style
                             """
                             background-color: blue;
                             color: white;
@@ -98,10 +84,6 @@ counter = \variant, value ->
                             margin: 5px;
                             font-size: 16px;
                             """,
-                        },
-                    ]
-                    [
-                        { name: "onclick", handler: encodeEvent (UserClickedIncrement variant) },
                     ]
                     [text "+"],
             ],
