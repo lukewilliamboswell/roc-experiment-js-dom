@@ -21,7 +21,7 @@ render = \@Counter value, variant ->
             li [] [
                 button
                     [
-                        on_click (encodeEvent (UserClickedDecrement variant)),
+                        on_click (encodeEvent (ClickedCounterDecrement variant)),
                         style
                             """
                             background-color: red;
@@ -42,7 +42,7 @@ render = \@Counter value, variant ->
             li [] [
                 button
                     [
-                        on_click (encodeEvent (UserClickedIncrement variant)),
+                        on_click (encodeEvent (ClickedCounterIncrement variant)),
                         style
                             """
                             background-color: blue;

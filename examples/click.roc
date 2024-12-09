@@ -20,19 +20,19 @@ init = \{} -> {
 }
 
 Event : [
-    UserClickedDecrement [Left, Middle, Right],
-    UserClickedIncrement [Left, Middle, Right],
+    ClickedCounterDecrement [Left, Middle, Right],
+    ClickedCounterIncrement [Left, Middle, Right],
 ]
 
 update : Model, List U8 -> Action Model
 update = \model, raw ->
     when decodeEvent raw is
-        UserClickedDecrement Left -> model |> &left (Counter.update model.left Decrement) |> Action.update
-        UserClickedDecrement Middle -> model |> &middle (Counter.update model.middle Decrement) |> Action.update
-        UserClickedDecrement Right -> model |> &right (Counter.update model.right Decrement) |> Action.update
-        UserClickedIncrement Left -> model |> &left (Counter.update model.left Increment) |> Action.update
-        UserClickedIncrement Middle -> model |> &middle (Counter.update model.middle Increment) |> Action.update
-        UserClickedIncrement Right -> model |> &right (Counter.update model.right Increment) |> Action.update
+        ClickedCounterDecrement Left -> model |> &left (Counter.update model.left Decrement) |> Action.update
+        ClickedCounterDecrement Middle -> model |> &middle (Counter.update model.middle Decrement) |> Action.update
+        ClickedCounterDecrement Right -> model |> &right (Counter.update model.right Decrement) |> Action.update
+        ClickedCounterIncrement Left -> model |> &left (Counter.update model.left Increment) |> Action.update
+        ClickedCounterIncrement Middle -> model |> &middle (Counter.update model.middle Increment) |> Action.update
+        ClickedCounterIncrement Right -> model |> &right (Counter.update model.right Increment) |> Action.update
 
 render : Model -> Html Model
 render = \model ->
@@ -48,20 +48,20 @@ render = \model ->
 encodeEvent : Event -> List U8
 encodeEvent = \event ->
     when event is
-        UserClickedIncrement Left -> [1]
-        UserClickedIncrement Right -> [2]
-        UserClickedIncrement Middle -> [3]
-        UserClickedDecrement Left -> [4]
-        UserClickedDecrement Right -> [5]
-        UserClickedDecrement Middle -> [6]
+        ClickedCounterIncrement Left -> [1]
+        ClickedCounterIncrement Right -> [2]
+        ClickedCounterIncrement Middle -> [3]
+        ClickedCounterDecrement Left -> [4]
+        ClickedCounterDecrement Right -> [5]
+        ClickedCounterDecrement Middle -> [6]
 
 decodeEvent : List U8 -> Event
 decodeEvent = \raw ->
     when raw is
-        [1] -> UserClickedIncrement Left
-        [2] -> UserClickedIncrement Right
-        [3] -> UserClickedIncrement Middle
-        [4] -> UserClickedDecrement Left
-        [5] -> UserClickedDecrement Right
-        [6] -> UserClickedDecrement Middle
+        [1] -> ClickedCounterIncrement Left
+        [2] -> ClickedCounterIncrement Right
+        [3] -> ClickedCounterIncrement Middle
+        [4] -> ClickedCounterDecrement Left
+        [5] -> ClickedCounterDecrement Right
+        [6] -> ClickedCounterDecrement Middle
         _ -> crash "unreachable - invalid event encoding"
