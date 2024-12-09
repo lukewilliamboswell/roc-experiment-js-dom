@@ -2,110 +2,66 @@ app [Model, init, update, render] {
     web: platform "../platform/main.roc",
 }
 
-import web.Html exposing [Html, div, button, ul, li, text, style, on_click]
+import web.Html exposing [Html, div, style]
 import web.Action exposing [Action]
+import Counter { encodeEvent } exposing [Counter]
 
 Model : {
-    left : I64,
-    middle : I64,
-    right : I64,
+    left : Counter,
+    middle : Counter,
+    right : Counter,
 }
 
 init : {} -> Model
 init = \{} -> {
-    left: -10,
-    middle: 0,
-    right: 10,
+    left: Counter.init -10,
+    middle: Counter.init 0,
+    right: Counter.init 10,
 }
 
 Event : [
-    UserClickedDecrement [Left, Middle, Right],
-    UserClickedIncrement [Left, Middle, Right],
+    ClickedCounterDecrement [Left, Middle, Right],
+    ClickedCounterIncrement [Left, Middle, Right],
 ]
 
 update : Model, List U8 -> Action Model
 update = \model, raw ->
     when decodeEvent raw is
-        UserClickedDecrement Left -> model |> &left (Num.subWrap model.left 1) |> Action.update
-        UserClickedDecrement Middle -> model |> &middle (Num.subWrap model.middle 1) |> Action.update
-        UserClickedDecrement Right -> model |> &right (Num.subWrap model.right 1) |> Action.update
-        UserClickedIncrement Left -> model |> &left (Num.addWrap model.left 1) |> Action.update
-        UserClickedIncrement Middle -> model |> &middle (Num.addWrap model.middle 1) |> Action.update
-        UserClickedIncrement Right -> model |> &right (Num.addWrap model.right 1) |> Action.update
+        ClickedCounterDecrement Left -> model |> &left (Counter.update model.left Decrement) |> Action.update
+        ClickedCounterDecrement Middle -> model |> &middle (Counter.update model.middle Decrement) |> Action.update
+        ClickedCounterDecrement Right -> model |> &right (Counter.update model.right Decrement) |> Action.update
+        ClickedCounterIncrement Left -> model |> &left (Counter.update model.left Increment) |> Action.update
+        ClickedCounterIncrement Middle -> model |> &middle (Counter.update model.middle Increment) |> Action.update
+        ClickedCounterIncrement Right -> model |> &right (Counter.update model.right Increment) |> Action.update
 
 render : Model -> Html Model
 render = \model ->
+
+    left = Html.translate (Counter.render model.left Left) .left &left
+    middle = Html.translate (Counter.render model.middle Middle) .middle &middle
+    right = Html.translate (Counter.render model.right Right) .right &right
+
     div
         [style "display: flex; justify-content: space-around; padding: 20px;"]
-        [
-            counter Left model.left,
-            counter Middle model.middle,
-            counter Right model.right,
-        ]
-
-counter : [Left, Middle, Right], I64 -> Html _
-counter = \variant, value ->
-    ul
-        [style "list-style: none; padding: 0; text-align: center;"]
-        [
-            li [] [
-                button
-                    [
-                        on_click (encodeEvent (UserClickedDecrement variant)),
-                        style
-                            """
-                            background-color: red;
-                            color: white;
-                            padding: 10px 20px;
-                            border: none;
-                            border-radius: 5px;
-                            cursor: pointer;
-                            margin: 5px;
-                            font-size: 16px;
-                            """,
-                    ]
-                    [text "-"],
-            ],
-            li
-                [style "font-size: 24px; margin: 15px 0; font-weight: bold;"]
-                [text (Inspect.toStr value)],
-            li [] [
-                button
-                    [
-                        on_click (encodeEvent (UserClickedIncrement variant)),
-                        style
-                            """
-                            background-color: blue;
-                            color: white;
-                            padding: 10px 20px;
-                            border: none;
-                            border-radius: 5px;
-                            cursor: pointer;
-                            margin: 5px;
-                            font-size: 16px;
-                            """,
-                    ]
-                    [text "+"],
-            ],
-        ]
+        [left, middle, right]
 
 encodeEvent : Event -> List U8
 encodeEvent = \event ->
     when event is
-        UserClickedIncrement Left -> [1]
-        UserClickedIncrement Right -> [2]
-        UserClickedIncrement Middle -> [3]
-        UserClickedDecrement Left -> [4]
-        UserClickedDecrement Right -> [5]
-        UserClickedDecrement Middle -> [6]
+        ClickedCounterIncrement Left -> [1]
+        ClickedCounterIncrement Right -> [2]
+        ClickedCounterIncrement Middle -> [3]
+        ClickedCounterDecrement Left -> [4]
+        ClickedCounterDecrement Right -> [5]
+        ClickedCounterDecrement Middle -> [6]
 
 decodeEvent : List U8 -> Event
 decodeEvent = \raw ->
     when raw is
-        [1] -> UserClickedIncrement Left
-        [2] -> UserClickedIncrement Right
-        [3] -> UserClickedIncrement Middle
-        [4] -> UserClickedDecrement Left
-        [5] -> UserClickedDecrement Right
-        [6] -> UserClickedDecrement Middle
+        [1] -> ClickedCounterIncrement Left
+        [2] -> ClickedCounterIncrement Right
+        [3] -> ClickedCounterIncrement Middle
+        [4] -> ClickedCounterDecrement Left
+        [5] -> ClickedCounterDecrement Right
+        [6] -> ClickedCounterDecrement Middle
         _ -> crash "unreachable - invalid event encoding"
