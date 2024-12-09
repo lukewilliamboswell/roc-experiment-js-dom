@@ -37,9 +37,9 @@ update = \model, raw ->
 render : Model -> Html Model
 render = \model ->
 
-    left = Html.translate (Counter.render model.left) .left &left
-    middle = Html.translate (Counter.render model.middle) .middle &middle
-    right = Html.translate (Counter.render model.right) .right &right
+    left = Html.translate (Counter.render model.left Left) .left &left
+    middle = Html.translate (Counter.render model.middle Middle) .middle &middle
+    right = Html.translate (Counter.render model.right Right) .right &right
 
     div
         [style "display: flex; justify-content: space-around; padding: 20px;"]

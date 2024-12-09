@@ -13,15 +13,15 @@ update = \@Counter value, action ->
         Increment -> @Counter (Num.addWrap value 1)
         Decrement -> @Counter (Num.subWrap value 1)
 
-render : Counter -> Html Counter
-render = \@Counter value ->
+render : Counter, _ -> Html Counter
+render = \@Counter value, variant ->
     ul
         [style "list-style: none; padding: 0; text-align: center;"]
         [
             li [] [
                 button
                     [
-                        on_click (encodeEvent (UserClickedDecrement Left)),
+                        on_click (encodeEvent (UserClickedDecrement variant)),
                         style
                             """
                             background-color: red;
@@ -42,7 +42,7 @@ render = \@Counter value ->
             li [] [
                 button
                     [
-                        on_click (encodeEvent (UserClickedIncrement Left)),
+                        on_click (encodeEvent (UserClickedIncrement variant)),
                         style
                             """
                             background-color: blue;
