@@ -3,7 +3,7 @@ platform ""
     exposes []
     packages {}
     imports []
-    provides [mainForHost]
+    provides [main_for_host]
 
 # the types used in here are placeholders, and usually swapped out as a workaround
 # for limitations in the current RustGlue.roc implementation
@@ -15,16 +15,16 @@ Html : [
     Element
         {
             tag : Str,
-            attrs : List { key: Str, value: Str },
+            attrs : List { key : Str, value : Str },
             events : List { name : Str, handler : List U8 },
         }
         (List Html),
 ]
 
-#Action : [
+# Action : [
 #    None,
 #    Update Str,
-#]
+# ]
 
-mainForHost : Html
-mainForHost = main {}
+main_for_host : Html
+main_for_host = main({})

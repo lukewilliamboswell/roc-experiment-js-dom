@@ -9,18 +9,18 @@ platform ""
         json: "https://github.com/lukewilliamboswell/roc-json/releases/download/0.11.0/z45Wzc-J39TLNweQUoLw3IGZtkQiEN3lTBv3BXErRjQ.tar.br",
     }
     imports []
-    provides [initForHost, updateForHost, renderForHost]
+    provides [init_for_host, update_for_host, render_for_host]
 
 import Html
 import Html
 import Action
 
-initForHost : I32 -> Box Model
-initForHost = \_ -> Box.box (init {})
+init_for_host : I32 -> Box Model
+init_for_host = \_ -> Box.box(init({}))
 
-updateForHost : Box Model, List U8 -> Action.Action (Box Model)
-updateForHost = \boxedModel, payload ->
-    Action.map (update (Box.unbox boxedModel) payload) Box.box
+update_for_host : Box Model, List U8 -> Action.Action (Box Model)
+update_for_host = \boxed_model, payload ->
+    Action.map(update(Box.unbox(boxed_model), payload), Box.box)
 
-renderForHost : Box Model -> Html.Html Model
-renderForHost = \boxedModel -> render (Box.unbox boxedModel)
+render_for_host : Box Model -> Html.Html Model
+render_for_host = \boxed_model -> render(Box.unbox(boxed_model))
